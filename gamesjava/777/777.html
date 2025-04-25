@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Caça-Níquel 777</title>
+  <style>
+    /* Reset básico */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    /* Estilo geral do corpo */
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #232526, #414345); /* Fundo mais sóbrio */
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    /* Tela principal do caça-níquel */
+    .screen {
+      background: #333;
+      border: 8px solid #f0a500;
+      border-radius: 25px;
+      padding: 3rem;
+      box-shadow: 0 0 40px #f0a500, 0 0 60px #ff0 inset; /* Efeito de brilho refinado */
+      text-align: center;
+      position: relative;
+      width: 400px;
+    }
+
+    /* Título do jogo */
+    h1 {
+      margin-bottom: 2rem;
+      color: #f0a500;
+      text-shadow: 0 0 15px #ffb700; /* Efeito de brilho no texto */
+      font-size: 3rem;
+      font-weight: bold;
+    }
+
+    /* Estilo para os rolos */
+    .slot-machine {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      margin: 2rem 0; /* Margem para centralizar os rolos */
+    }
+
+    /* Cada rolo */
+    .reel {
+      background: #1a1a1a;
+      border: 4px solid #888;
+      border-radius: 15px;
+      width: 80px;
+      height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+      font-size: 3rem;
+      box-shadow: 0 4px 2px rgba(0, 0, 0, 0.7); /* Sombra para destacar */
+    }
+
+    /* Conteúdo dentro de cada rolo */
+    .reel-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      animation: none;
+      transform: translateY(0);
+      transition: transform 3s ease-out; /* Transição suave */
+    }
+
+    /* Animação de rotação dos rolos */
+    .reel.spin .reel-content {
+      animation: roll 1,5 seconds infinite; /* Animação de rotação */
+
+    /* Definição da animação de rotação */
+    @keyframes roll {
+      0% { transform: translateY(0); }
+      25% { transform: translateY(-100%); }
+      50% { transform: translateY(-200%); }
+      75% { transform: translateY(-300%); }
+      100% { transform: translateY(-500%); } /* Aumentei para uma rotação mais longa */
+    }
+
+    /* Estilo para o texto de pontuação */
+    .score {
+      font-size: 1.2rem;
+      margin-bottom: 1.5rem;
+      color: #f0a500;
+      font-weight: bold;
+    }
+
+    /* Estilo para o texto de resultado */
+    .result {
+      margin-top: 1rem;
+      font-size: 1.5rem;
+      color: #28a745; /* Verde para mensagens positivas */
+      font-weight: bold;
+    }
+
+    /* Botões */
+    .lever-button, .add-coins-button {
+      width: 180px;
+      padding: 1.5rem 3rem;
+      font-size: 1.6rem;
+      font-weight: bold;
+      border-radius: 30px;
+      cursor: pointer;
+      transition: all 0.3s ease-in-out;
+      text-align: center;
+    }
+
+    /* Botão de puxar a alavanca */
+    .lever-button {
+      background: linear-gradient(to top, #9c27b0, #6a1b9a);
+      border: 4px solid #4a148c;
+      color: white;
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5);
+    }
+
+    .lever-button:hover {
+      background: linear-gradient(to top, #6a1b9a, #9c27b0);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.6);
+    }
+
+    .lever-button:active {
+      box-shadow: none;
+      transform: translateY(4px); /* Efeito de clique */
+    }
+
+    /* Botão de adicionar moedas */
+    .add-coins-button {
+      background: linear-gradient(to top, #4caf50, #388e3c);
+      border: 4px solid #2e7d32;
+      color: white;
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5);
+      margin-top: 1.5rem;
+    }
+
+    .add-coins-button:hover {
+      background: linear-gradient(to top, #388e3c, #4caf50);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.6);
+    }
+
+    .add-coins-button:active {
+      box-shadow: none;
+      transform: translateY(4px); /* Efeito de clique */
+    }
+  </style>
+</head>
+<body>
+  <div class="screen">
+    <h1>Caça-Níquel 777 🎰</h1>
+    <div class="score" id="pontuacao">Moedas: 100</div>
+    <div class="slot-machine">
+      <!-- Rolo 1 -->
+      <div class="reel" id="reel1">
+        <div class="reel-content">
+            <br>🍋<br>🔔<br>💎<br>7️⃣<br>🍒<br>🍋<br>🔔<br>💎<br>7️⃣
+            <br>🍋<br>🔔<br>💎<br>7️⃣<br>🍒<br>🍋<br>🔔<br>💎<br>7️⃣
+            <br>🍋<br>🔔<br>💎<br>7️⃣<br>🍒<br>🍋<br>🔔<br>💎<br>7️⃣
+            <br>🍋<br>🔔<br>💎<br>7️⃣<br>🍒<br>🍋<br>🔔<br>💎<br>7️⃣
+        </div>
+      </div>
+      <!-- Rolo 2 -->
+      <div class="reel" id="reel2">
+        <div class="reel-content">
+          <br>🍋<br>🔔<br>💎<br>7️⃣<br>🍒<br>🍋<br>🔔<br>💎<br>7️⃣
+          <br>🍋<br>🔔<br>💎<br>7️⃣<br>🍒<br>🍋<br>🔔<br>💎<br>7️⃣
+        </div>
+      </div>
+      <!-- Rolo 3 -->
+      <div class="reel" id="reel3">
+        <div class="reel-content">
+          <br>🍋<br>🔔<br>💎<br>7️⃣<br>🍒<br>🍋<br>🔔<br>💎<br>7️⃣
+          <br>🍋<br>🔔<br>💎<br>7️⃣<br>🍒<br>🍋<br>🔔<br>💎<br>7️⃣
+        </div>
+      </div>
+    </div>
+    <button class="lever-button" onclick="girar()">Puxar Alavanca 🎯</button>
+    <div class="result" id="resultado"></div>
+    <button class="add-coins-button" onclick="adicionarMoedas()">Adicionar Moedas (+50)</button>
+  </div>
+
+  <script>
+    // Lista de emojis disponíveis no caça-níquel
+    const emojis = ['🍒','🍋','🔔','💎','7️⃣'];
+
+    // Inicializa as moedas com valor salvo no localStorage ou 100 por padrão
+    let moedas = localStorage.getItem('moedas') ? parseInt(localStorage.getItem('moedas')) : 100;
+
+    // Elementos de pontuação e resultado
+    const pontuacao = document.getElementById('pontuacao');
+    const resultado = document.getElementById('resultado');
+
+    // Função para atualizar a pontuação na tela
+    function atualizarPontuacao() {
+      pontuacao.innerText = `Moedas: ${moedas}`;
+      localStorage.setItem('moedas', moedas);
+    }
+
+    // Função de adicionar moedas
+    function adicionarMoedas() {
+      moedas += 50;
+      atualizarPontuacao();
+    }
+
+    // Função de rotação dos rolos
+    function girar() {
+      // Sorteia um emoji para cada rolo
+      const sorteios = [
+        emojis[Math.floor(Math.random() * emojis.length)],
+        emojis[Math.floor(Math.random() * emojis.length)],
+        emojis[Math.floor(Math.random() * emojis.length)]
+      ];
+
+      // Exibe os emojis sorteados nos rolos
+      document.querySelectorAll('.reel-content').forEach((content, index) => {
+        content.innerHTML = `<br>${sorteios[index]}<br>${sorteios[index]}<br>${sorteios[index]}<br>`;
+      });
+
+      // Adiciona animação de rotação aos rolos
+      document.querySelectorAll('.reel').forEach(reel => {
+        reel.classList.add('spin');
+      });
+
+      // Verifica se o jogador ganhou (todas as imagens iguais)
+      setTimeout(() => {
+        if (sorteios[0] === sorteios[1] && sorteios[1] === sorteios[2]) {
+          resultado.innerText = 'Você ganhou! 🎉';
+          moedas += 100;
+        } else {
+          resultado.innerText = 'Tente novamente! 🤞';
+          moedas -= 10;
+        }
+
+        atualizarPontuacao();
+        // Remove animação após 3 segundos
+        document.querySelectorAll('.reel').forEach(reel => {
+          reel.classList.remove('spin');
+        });
+      }, 3000);
+    }
+
+    // Atualiza a pontuação inicial
+    atualizarPontuacao();
+  </script>
+</body>
+</html>

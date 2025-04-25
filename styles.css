@@ -1,0 +1,152 @@
+/* Reset e base */
+* {
+    margin: 0; /* Remove margens padrão */
+    padding: 0; /* Remove preenchimentos padrão */
+    box-sizing: border-box; /* Inclui bordas e preenchimentos no tamanho total dos elementos */
+}
+
+body {
+    font-family: Arial, sans-serif; /* Define a fonte padrão */
+    background-color: #121212; /* Fundo escuro */
+    color: #f0f0f0; /* Texto claro */
+    line-height: 1.6; /* Espaçamento entre linhas */
+    padding: 20px; /* Espaçamento interno */
+}
+
+a {
+    color: #00bcd4; /* Links com cor azul */
+    text-decoration: none; /* Remove sublinhado dos links */
+}
+
+a:hover {
+    text-decoration: underline; /* Adiciona sublinhado ao passar o mouse */
+}
+
+/* Navegação */
+header {
+    text-align: center; /* Centraliza o conteúdo do cabeçalho */
+    padding-bottom: 20px; /* Espaçamento inferior */
+}
+
+.nav-menu {
+    list-style: none; /* Remove marcadores da lista */
+    display: flex; /* Exibe os itens em linha */
+    justify-content: center; /* Centraliza os itens horizontalmente */
+    gap: 20px; /* Espaçamento entre os itens */
+    margin-bottom: 15px; /* Espaçamento inferior */
+}
+
+.nav-menu a {
+    font-weight: bold; /* Links com texto em negrito */
+    color: #00bcd4; /* Cor azul */
+    padding: 10px 20px; /* Espaçamento interno */
+    border: 1px solid #00bcd4; /* Borda azul */
+    border-radius: 5px; /* Bordas arredondadas */
+    transition: background-color 0.3s ease, color 0.3s ease; /* Transição suave para mudanças de cor */
+}
+
+.nav-menu a:hover {
+    background-color: #00bcd4; /* Fundo azul ao passar o mouse */
+    color: #121212; /* Texto escuro ao passar o mouse */
+}
+
+/* Player de Vídeo */
+.video-section {
+    text-align: center; /* Centraliza o conteúdo */
+    margin-bottom: 10px; /* Espaçamento inferior */
+}
+
+.video-container {
+    display: flex; /* Exibe os elementos em linha */
+    align-items: center; /* Alinha verticalmente ao centro */
+    justify-content: center; /* Centraliza horizontalmente */
+    gap: 10px; /* Espaçamento entre os botões e o player */
+}
+
+/* Container do Player de Vídeo */
+#videoPlayerContainer {
+    width: 100%; /* Largura total do container pai */
+    max-width: 800px; /* Define uma largura máxima para o player */
+    aspect-ratio: 16 / 9; /* Mantém a proporção 16:9 */
+    border-radius: 8px; /* Bordas arredondadas */
+    overflow: hidden; /* Esconde qualquer conteúdo que ultrapasse o container */
+    box-shadow: 0 0 15px rgba(0, 255, 255, 0.2); /* Sombra azul clara */
+}
+
+/* Player de Vídeo Responsivo */
+.video-container iframe {
+    width: 100%; /* Largura total do container */
+    height: auto; /* Altura ajustada automaticamente */
+    aspect-ratio: 16 / 9; /* Mantém a proporção 16:9 */
+    border: none; /* Remove borda do iframe */
+    border-radius: inherit; /* Herda o border-radius do container pai */
+}
+
+.arrow {
+    background-color: #00bcd4; /* Fundo azul */
+    color: #121212; /* Texto escuro */
+    border: none; /* Remove bordas */
+    padding: 10px 15px; /* Espaçamento interno */
+    border-radius: 50%; /* Botões circulares */
+    cursor: pointer; /* Cursor de ponteiro ao passar o mouse */
+    transition: background-color 0.3s ease; /* Transição suave para mudanças de cor */
+}
+
+.arrow:hover {
+    background-color: #0097a7; /* Fundo azul mais escuro ao passar o mouse */
+}
+
+/* Carrossel de Notícias */
+.news-carousel {
+    margin: 40px 0;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    padding: 20px;
+    background-color: #1e1e1e;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.news-grid-carousel {
+    display: flex;
+    gap: 20px;
+    scroll-snap-align: start;
+    scroll-behavior: smooth;
+}
+
+.news-box {
+    flex: 0 0 auto;
+    width: 300px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    padding: 15px;
+    background-color: #222;
+    color: #fff;
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.news-box img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    border-bottom: 1px solid #444;
+    margin-bottom: 10px;
+}
+
+/* Rodapé */
+footer {
+    text-align: center; /* Centraliza o texto */
+    padding: 20px 0; /* Espaçamento interno */
+    margin-top: 40px; /* Espaçamento superior */
+    border-top: 1px solid #333; /* Linha superior */
+}
+
+/* Estilo para o título das seções */
+.section-title {
+    text-align: center; /* Centraliza o texto */
+    font-size: 2em; /* Define o tamanho do texto */
+    margin-bottom: 20px; /* Espaçamento inferior */
+    color: cyan; /* Define a cor como cyan */
+    font-weight: bold; /* Deixa o texto em negrito */
+}

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="CBDblog - Seu blog de notícias e vídeos">
+    <meta name="author" content="CBDblog">
+    <meta name="keywords" content="blog, notícias, vídeos">
+    <meta name="robots" content="index, follow">
+    <title>CBDnoticias</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Cabeçalho e Navegação -->
+    <header>
+        <nav>
+            <ul class="nav-menu">
+                <li><a href="CSM/login.html" id="Login">Login</a></li>
+                <li><a href="gamesjava/games.html">Games</a></li>
+                <li><a href="paginanoticias.html">Notícia</a></li>
+            </ul>
+        </nav>
+        <h1>Bem-vindo ao CBDnoticias!</h1>
+    </header>
+
+    <!-- Player de Vídeo -->
+    <main>
+        <section class="video-section">
+            <div class="video-container">
+                <button class="arrow left" onclick="previousVideo()">&#9664;</button>
+                <div id="videoPlayerContainer">
+                    <iframe 
+                        id="videoPlayer" 
+                        src="https://www.youtube.com/embed/tqyeLuEwCQc" 
+                        title="Vídeo principal"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                        allowfullscreen>
+                    </iframe>
+                </div>
+                <button class="arrow right" onclick="nextVideo()">&#9654;</button>
+            </div>
+        </section>
+        <BR> <br>
+        <section> <h2 class="section-title">Notícias Recentes</h2></section><!-- Carrossel de Notícias -->
+        <section class="news-carousel">
+                       <div class="news-grid-carousel">
+                <!-- As notícias serão carregadas dinamicamente aqui pelo JavaScript -->
+            </div>
+        </section>
+    </main>
+
+    <!-- Rodapé -->
+    <footer>
+        <p>&copy; 2025 CBDblog. Todos os direitos reservados.</p>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+        // Vídeos do carrossel
+        const videoLinks = [
+            "https://www.youtube.com/embed/tqyeLuEwCQc",
+            "https://www.youtube.com/embed/video2",
+            "https://www.youtube.com/embed/video3",
+            "https://www.youtube.com/embed/video4",
+            "https://www.youtube.com/embed/video5"
+        ];
+
+        let currentVideoIndex = 0;
+
+        /**
+         * Atualiza o vídeo exibido no player com base no índice atual.
+         */
+        function updateVideo() {
+            const player = document.getElementById("videoPlayer");
+            player.src = videoLinks[currentVideoIndex];
+        }
+
+        /**
+         * Exibe o vídeo anterior no carrossel.
+         */
+        function previousVideo() {
+            currentVideoIndex = (currentVideoIndex - 1 + videoLinks.length) % videoLinks.length;
+            updateVideo();
+        }
+
+        /**
+         * Exibe o próximo vídeo no carrossel.
+         */
+        function nextVideo() {
+            currentVideoIndex = (currentVideoIndex + 1) % videoLinks.length;
+            updateVideo();
+        }
+
+        /**
+         * Carrega as notícias do servidor e as exibe no carrossel.
+         */
+        document.addEventListener("DOMContentLoaded", function () {
+            // Faz uma requisição para a API de notícias
+            fetch('/api/noticias')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Erro ao carregar as notícias'); // Lança um erro se a resposta não for bem-sucedida
+                    }
+                    return response.json(); // Converte a resposta para JSON
+                })
+                .then(noticias => {
+                    const container = document.querySelector(".news-grid-carousel"); // Seleciona o container do carrossel
+                    if (container) {
+                        container.innerHTML = ''; // Limpa o container antes de adicionar as notícias
+
+                        // Adiciona cada notícia ao container
+                        noticias.forEach(noticia => {
+                            const newsBox = document.createElement("div");
+                            newsBox.classList.add("news-box"); // Adiciona a classe para estilização
+
+                            // Cria o conteúdo HTML da notícia
+                            newsBox.innerHTML = `
+                                <img src="${noticia.link.replace('.html', '.jpg')}" alt="Imagem da ${noticia.titulo}" />
+                                <h3>${noticia.titulo}</h3>
+                                <p>${new Date(noticia.data).toLocaleDateString()}</p>
+                                <a href="${noticia.link}" class="read-more">Ler Mais</a>
+                            `;
+
+                            container.appendChild(newsBox); // Adiciona a notícia ao container
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro ao carregar as notícias:', error); // Exibe o erro no console
+                });
+        });
+    </script>
+    <script src="frontend.js"></script>
+</body>
+</html>

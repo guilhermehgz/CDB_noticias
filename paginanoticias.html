@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Todas as notícias publicadas no CDBnoticias">
+    <meta name="author" content="CDBnoticias">
+    <meta name="keywords" content="notícias, blog, CDBnoticias">
+    <meta name="robots" content="index, follow">
+    <title>Todas as Notícias - CDBnoticias</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="paginanoticias.css">
+</head>
+<body>
+    <!-- Cabeçalho -->
+    <header>
+        <nav>
+            <ul class="nav-menu">
+                <li><a href="index.html">Início</a></li>
+                <li><a href="CSM/login.html">Login</a></li>
+                <li><a href="gamesjava/games.html">Games</a></li>
+            </ul>
+        </nav>
+        <h1>Últimas Notícias</h1>
+    </header>
+
+    <!-- Conteúdo Principal -->
+    <main>
+        <section class="all-news">
+            <h2 class="section-title">Notícias Publicadas</h2>
+            <div class="news-list">
+                <!-- Exemplo de card de notícia -->
+                <div class="news-item">
+                    <h3>Título da Notícia</h3>
+                    <p>Data da publicação</p>
+                    <a href="#" class="read-more">Ler Mais</a>
+                </div>
+                <div class="news-item">
+                    <h3>Título da Notícia 2</h3>
+                    <p>Data da publicação</p>
+                    <a href="#" class="read-more">Ler Mais</a>
+                </div>
+                <!-- Mais cards serão adicionados dinamicamente -->
+            </div>
+        </section>
+    </main>
+
+    <!-- Rodapé -->
+    <footer>
+        <p>&copy; 2025 CDBnoticias. Todos os direitos reservados.</p>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const container = document.querySelector(".news-list");
+
+            // Faz uma requisição para a API de notícias
+            fetch('/api/noticias')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Erro ao carregar as notícias');
+                    }
+                    return response.json();
+                })
+                .then(noticias => {
+                    if (container) {
+                        container.innerHTML = ''; // Limpa o container antes de adicionar as notícias
+
+                        // Adiciona cada notícia ao container
+                        noticias.forEach(noticia => {
+                            const newsItem = document.createElement("div");
+                            newsItem.classList.add("news-item");
+
+                            // Cria o conteúdo HTML da notícia
+                            newsItem.innerHTML = `
+                                <h3>${noticia.titulo}</h3>
+                                <p>${new Date(noticia.data).toLocaleDateString()}</p>
+                                <a href="${noticia.link}" class="read-more">Ler Mais</a>
+                            `;
+
+                            container.appendChild(newsItem); // Adiciona a notícia ao container
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro ao carregar as notícias:', error);
+                });
+        });
+    </script>
+    <script src="paginanoticia.js"></script>
+</body>
+</html>

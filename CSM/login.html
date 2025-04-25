@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="CBDblog - Seu blog de notícias e vídeos" />
+  <meta name="author" content="CBDblog" />
+  <meta name="keywords" content="blog, notícias, vídeos" />
+  <meta name="robots" content="index, follow" />
+  <title>Login - CDB Notícias</title>
+  <link rel="stylesheet" href="login.css">
+</head>
+<body>
+  <div class="login-container">
+    <header>
+      <h1 style="text-transform: none;">LOGIN <br> CBDnotícias </h1>
+    </header>
+    <main>
+      <form id="loginForm">
+        <input type="text" id="username" placeholder="Usuário" required><br>
+        <input type="password" id="password" placeholder="Senha" required><br>
+        <button type="submit">Entrar</button>
+        <p id="errorMsg" class="error"></p>
+      </form>
+      <br>
+      <button onclick="window.location.href='../index.html'" style="margin-top: 10px;">Voltar</button>
+    </main>
+    <footer>
+      <p>&copy; 2025 CBDnotícias. <br> Todos os direitos reservados.</p>
+    </footer>
+  </div>
+
+  <!-- JS -->
+  <script src="login.js"></script>
+  <script>
+    // Protege se usuário já estiver logado
+    if (localStorage.getItem("loggedIn") === "true") {
+      window.location.href = "center/inicial.html";
+    }
+
+    function handleLogin(event) {
+      event.preventDefault();
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+
+      if (username === "admin" && password === "1234") {
+        localStorage.setItem("loggedIn", "true");
+        window.location.href = "center/inicial.html";
+      } else {
+        document.getElementById("errorMsg").textContent = "Usuário ou senha inválidos!";
+      }
+    }
+
+    document.getElementById("loginForm").addEventListener("submit", handleLogin);
+  </script>
+</body>
+</html>

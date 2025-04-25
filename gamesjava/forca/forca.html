@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jogo da Forca</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      text-align: center;
+      padding: 50px;
+    }
+
+    h1 {
+      color: #333;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .word {
+      font-size: 2rem;
+      margin: 20px 0;
+      letter-spacing: 5px;
+      text-transform: uppercase;
+    }
+
+    .letters {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 20px 0;
+    }
+
+    .letter {
+      font-size: 1.5rem;
+      padding: 10px;
+      background-color: #ddd;
+      border-radius: 5px;
+      cursor: pointer;
+      user-select: none;
+      transition: background-color 0.2s;
+    }
+
+    .letter:hover {
+      background-color: #bbb;
+    }
+
+    .chosen {
+      color: red;
+    }
+
+    .message {
+      margin: 20px 0;
+      font-size: 1.2rem;
+      font-weight: bold;
+    }
+
+    .attempts {
+      margin-top: 20px;
+      font-size: 1.2rem;
+    }
+
+    .game-over {
+      font-size: 2rem;
+      font-weight: bold;
+      color: red;
+    }
+
+    .win {
+      font-size: 2rem;
+      font-weight: bold;
+      color: green;
+    }
+
+    button {
+      padding: 10px 20px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1rem;
+      margin-top: 20px;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+
+    .category-select {
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Jogo da Forca</h1>
+  <div class="container">
+    <div class="category-select">
+      <label for="category">Escolha uma categoria:</label>
+      <select id="category">
+        <option value="frutas">Frutas</option>
+        <option value="cidades">Cidades</option>
+        <option value="objetos">Objetos</option>
+        <option value="marcas">Marcas</option>
+        <option value="nomes">Nome de Pessoa</option>
+        <option value="animais">Animais</option>
+        <option value="geral">Geral</option> <!-- Nova categoria -->
+      </select>
+    </div>
+    <div class="word" id="word"></div>
+    <div class="letters" id="letters"></div>
+    <div class="attempts" id="attempts"></div>
+    <div class="message" id="message"></div>
+    <div id="score">Pontos: 0</div>
+    <button onclick="reiniciarJogo()">Reiniciar Jogo</button>
+    <button onclick="voltarPaginaInicial()">Voltar à Página Inicial</button>
+    <button onclick="window.location.href='../games.html'">Voltar à Tela Inicial</button>
+  </div>
+
+  <script>
+    const palavrasFrutas = ['banana', 'maca', 'laranja', 'manga', 'kiwi', 'morango', 'goiaba', 'abacaxi', 'pera', 'cabeludinha', 'amora', 'tamarindo', 'cabeluda', 'pessego', 'caqui', 'figo', 'cabeluda', 'acai', 'cabeluda', 'groselha', 'mamão', 'cabeluda', 'cabeludo', 'limão', 'uva', 'melancia', 'cabeludo', 'morango', 'mangaba', 'jabuticaba', 'graviola', 'melão', 'cabeludo', 'abiu', 'seriguela', 'carambola', 'cabeluda', 'cabeludo', 'cabeluda'];
+    
+    const palavrasCidades = ['sao paulo', 'rio de janeiro', 'salvador', 'curitiba', 'belo horizonte', 'porto alegre', 'fortaleza', 'brasilia', 'manaus', 'recife', 'goiania', 'campinas', 'sao bernardo do campo', 'santos', 'vitoria', 'sao carlos', 'juiz de fora', 'maceio', 'florianopolis', 'ribeirao preto', 'sao jose dos campos', 'cuiaba', 'belem', 'aracaju', 'natal', 'macapa', 'teresina', 'palmas', 'dourados'];
+    
+    const palavrasObjetos = ['mesa', 'cadeira', 'caneta', 'livro', 'guitarra', 'computador', 'carro', 'relógio', 'televisao', 'faca', 'porta', 'janela', 'telefone', 'sofa', 'microfone', 'celular', 'panela', 'abajur', 'abafador', 'garrafa', 'luminaria', 'fone de ouvido', 'tv', 'mouse', 'teclado', 'notebook', 'scanner', 'impressora', 'ar condicionado', 'ventilador', 'armario'];
+    
+    const palavrasMarcas = ['apple', 'microsoft', 'google', 'samsung', 'sony', 'nike', 'adidas', 'coca-cola', 'pepsi', 'heineken', 'mercedes', 'toyota', 'ford', 'bmw', 'volkswagen', 'puma', 'rebook', 'louis vuitton', 'gucci', 'chanel', 'cartier', 'loreal', 'mac', 'amazon', 'huawei', 'facebook', 'instagram', 'tesla', 'lego', 'nintendo', 'xiaomi'];
+    
+    const palavrasNomes = ['ana', 'luana', 'maria', 'joana', 'carlos', 'gustavo', 'felipe', 'luiz', 'eliane', 'pedro', 'juliana', 'gabriel', 'mateus', 'isabela', 'victor', 'leonardo', 'fernanda', 'bruna', 'lucas', 'thiago', 'rafaela', 'marcos', 'luciana', 'daniele', 'carla', 'adriana', 'rosangela', 'monique', 'gisele', 'andrea'];
+    
+    const palavrasAnimais = ['gato', 'cachorro', 'elefante', 'leao', 'tigre', 'urso', 'cavalo', 'cavalo', 'macaco', 'coelho', 'galo', 'galinha', 'pato', 'cervo', 'onca', 'lobo', 'rato', 'siri', 'caranguejo', 'golfinho', 'tartaruga', 'crocodilo', 'camelo', 'pinguim', 'aguia', 'papagaio', 'jacare', 'camundongo', 'hamster', 'baleia'];
+
+    const palavrasGeral = [
+      ...palavrasFrutas,
+      ...palavrasCidades,
+      ...palavrasObjetos,
+      ...palavrasMarcas,
+      ...palavrasNomes,
+      ...palavrasAnimais
+    ];
+    
+    let palavras = palavrasFrutas;
+    let palavraEscolhida;
+    let tentativasRestantes;
+    let letrasCorretas;
+    let letrasErradas;
+    let pontos = 0;
+
+    function escolherPalavra() {
+      return palavras[Math.floor(Math.random() * palavras.length)];
+    }
+
+    function reiniciarJogo() {
+      palavraEscolhida = escolherPalavra();
+      tentativasRestantes = 6;
+      letrasCorretas = [];
+      letrasErradas = [];
+      atualizarJogo();
+    }
+
+    function atualizarJogo() {
+      const palavraExibida = palavraEscolhida.split('').map(letra => (letrasCorretas.includes(letra) ? letra : '_')).join(' ');
+      document.getElementById('word').textContent = palavraExibida;
+
+      document.getElementById('letters').innerHTML = '';
+      'abcdefghijklmnopqrstuvwxyz'.split('').forEach(letra => {
+        const button = document.createElement('div');
+        button.classList.add('letter');
+        button.textContent = letra;
+        button.onclick = () => tentar(letra);
+        if (letrasCorretas.includes(letra) || letrasErradas.includes(letra)) {
+          button.classList.add('chosen');
+          button.style.pointerEvents = 'none'; // Desabilita as letras que já foram clicadas
+        }
+        document.getElementById('letters').appendChild(button);
+      });
+
+      document.getElementById('attempts').textContent = `Tentativas restantes: ${tentativasRestantes}`;
+      document.getElementById('score').textContent = `Pontos: ${pontos}`;
+
+      document.getElementById('message').textContent = '';
+
+      if (tentativasRestantes === 0) {
+        document.getElementById('message').textContent = `Você perdeu! A palavra era "${palavraEscolhida}".`;
+        document.getElementById('message').classList.add('game-over');
+      }
+
+      if (palavraEscolhida.split('').every(letra => letrasCorretas.includes(letra))) {
+        pontos += 10; // Incrementa 10 pontos quando o jogador vence
+        document.getElementById('message').textContent = 'Você venceu!';
+        document.getElementById('message').classList.add('win');
+      }
+    }
+
+    function tentar(letra) {
+      if (palavraEscolhida.includes(letra)) {
+        letrasCorretas.push(letra);
+      } else {
+        letrasErradas.push(letra);
+        tentativasRestantes--;
+      }
+      atualizarJogo();
+    }
+
+    document.getElementById('category').addEventListener('change', function() {
+      const categoriaSelecionada = document.getElementById('category').value;
+      switch (categoriaSelecionada) {
+        case 'frutas':
+          palavras = palavrasFrutas;
+          break;
+        case 'cidades':
+          palavras = palavrasCidades;
+          break;
+        case 'objetos':
+          palavras = palavrasObjetos;
+          break;
+        case 'marcas':
+          palavras = palavrasMarcas;
+          break;
+        case 'nomes':
+          palavras = palavrasNomes;
+          break;
+        case 'animais':
+          palavras = palavrasAnimais;
+          break;
+        case 'geral':
+          palavras = palavrasGeral;
+          break;
+      }
+      reiniciarJogo();
+    });
+
+    function voltarPaginaInicial() {
+      window.location.href = "../games.html"; // Redireciona para a página "paggames.html"
+    }
+
+    reiniciarJogo();
+  </script>
+</body>
+</html>

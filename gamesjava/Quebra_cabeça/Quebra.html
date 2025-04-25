@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Quebra-Cabeça Deslizante</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #0d0d0d;
+      color: #eee;
+      text-align: center;
+      padding: 20px;
+    }
+    h1 {
+      color: #2196f3;
+      margin-bottom: 20px;
+    }
+    button, select {
+      font-size: 1em;
+      margin: 10px;
+      padding: 10px 20px;
+      border-radius: 5px;
+      border: none;
+      background-color: #2196f3;
+      color: white;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    button:hover, select:hover {
+      background-color: #1976d2;
+    }
+    .puzzle {
+      margin: 30px auto;
+      display: grid;
+      gap: 2px;
+      background: #222;
+      border-radius: 10px;
+      box-shadow: 2px 2px 8px rgba(0,0,0,0.5);
+    }
+    .tile {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2em;
+      color: white;
+      background-color: #2196f3;
+      cursor: pointer;
+      transition: background-color 0.2s, transform 0.2s;
+      border-radius: 6px;
+    }
+    .tile:hover {
+      background-color: #1976d2;
+      transform: scale(1.05);
+    }
+    .empty {
+      background: #0d0d0d;
+      cursor: default;
+    }
+    #mensagem {
+      font-size: 1.4em;
+      color: #00e676;
+      margin-top: 20px;
+    }
+    #temporizador {
+      font-weight: bold;
+      margin: 10px 0;
+      font-size: 1.2em;
+    }
+    .escolhas {
+      margin-bottom: 20px;
+    }
+    .opcao-atual {
+      color: #ccc;
+      font-size: 0.9em;
+      margin-top: 5px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Quebra-Cabeça Deslizante</h1>
+  <div class="escolhas">
+    <label for="dificuldade">Dificuldade:</label>
+    <select id="dificuldade" onchange="mostrarEscolha()">
+      <option value="3">Fácil (3x3)</option>
+      <option value="4">Médio (4x4)</option>
+      <option value="5">Difícil (5x5)</option>
+    </select>
+    <div class="opcao-atual" id="dificuldadeEscolhida"></div>
+    <br>
+    <label for="temaSelect">Tema:</label>
+    <select id="temaSelect" onchange="mostrarEscolha()">
+      <option value="classico">Clássico</option>
+      <option value="blocos">Blocos</option>
+      <option value="tech">Tech</option>
+      <option value="gradial">Gradial</option>
+      <option value="icones">Ícones</option>
+    </select>
+    <div class="opcao-atual" id="temaEscolhido"></div>
+  </div>
+  <button onclick="iniciar()">Iniciar Jogo</button>
+  <button onclick="window.location.href='../games.html'">Voltar à Tela Inicial</button>
+  <div id="temporizador">Tempo: 0s</div>
+  <div class="puzzle" id="puzzle"></div>
+  <div id="mensagem"></div>
+
+  <script>
+    const puzzle = document.getElementById("puzzle");
+    const temaSelect = document.getElementById("temaSelect");
+    const dificuldadeSelect = document.getElementById("dificuldade");
+    const temporizador = document.getElementById("temporizador");
+    const temaEscolhido = document.getElementById("temaEscolhido");
+    const dificuldadeEscolhida = document.getElementById("dificuldadeEscolhida");
+
+    let tiles = [];
+    let tempo = 0;
+    let intervalo;
+    let tamanho = parseInt(dificuldadeSelect.value);
+
+    function mostrarEscolha() {
+        // Atualiza o texto das escolhas
+        dificuldadeEscolhida.textContent = `Escolhido: ${dificuldadeSelect.options[dificuldadeSelect.selectedIndex].text}`;
+        temaEscolhido.textContent = `Escolhido: ${temaSelect.options[temaSelect.selectedIndex].text}`;
+
+        // Atualiza o tamanho do quebra-cabeça com base na dificuldade
+        tamanho = parseInt(dificuldadeSelect.value);
+        puzzle.style.width = `${tamanho * 100}px`;
+        puzzle.style.height = `${tamanho * 100}px`;
+        puzzle.style.gridTemplateColumns = `repeat(${tamanho}, 1fr)`;
+        puzzle.style.gridTemplateRows = `repeat(${tamanho}, 1fr)`;
+
+        // Atualiza o quebra-cabeça instantaneamente
+        criarPecas();
+        renderizar();
+    }
+
+    function iniciar() {
+        tamanho = parseInt(dificuldadeSelect.value);
+        puzzle.style.width = `${tamanho * 100}px`;
+        puzzle.style.height = `${tamanho * 100}px`;
+        puzzle.style.gridTemplateColumns = `repeat(${tamanho}, 1fr)`;
+        puzzle.style.gridTemplateRows = `repeat(${tamanho}, 1fr)`;
+
+        tempo = 0;
+        clearInterval(intervalo);
+        intervalo = setInterval(() => {
+            tempo++;
+            temporizador.textContent = `Tempo: ${tempo}s`;
+        }, 1000);
+
+        criarPecas();
+        embaralhar();
+        renderizar();
+        document.getElementById("mensagem").textContent = "";
+    }
+
+    function criarPecas() {
+        tiles = [];
+        for (let i = 1; i < tamanho * tamanho; i++) {
+            tiles.push(i);
+        }
+        tiles.push(null);
+    }
+
+    function embaralhar() {
+        do {
+            for (let i = tiles.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [tiles[i], tiles[j]] = [tiles[j], tiles[i]];
+            }
+        } while (!podeResolver(tiles));
+    }
+
+    function podeResolver(arr) {
+        const nums = arr.filter(x => x !== null);
+        let inversoes = 0;
+        for (let i = 0; i < nums.length; i++) {
+            for (let j = i + 1; j < nums.length; j++) {
+                if (nums[i] > nums[j]) inversoes++;
+            }
+        }
+        if (tamanho % 2 === 1) {
+            return inversoes % 2 === 0;
+        } else {
+            const linhaVazia = Math.floor(arr.indexOf(null) / tamanho);
+            return (inversoes + linhaVazia) % 2 === 1;
+        }
+    }
+
+    function renderizar() {
+        puzzle.innerHTML = "";
+        const tema = temaSelect.value;
+        tiles.forEach((val, i) => {
+            const div = document.createElement("div");
+            if (val === null) {
+                div.className = "tile empty";
+            } else {
+                div.className = "tile";
+
+                if (tema === "blocos") {
+                    div.textContent = val;
+                    div.style.backgroundColor = `hsl(${val * 30}, 80%, 50%)`;
+                    div.style.border = "3px solid #111";
+                    div.style.boxShadow = "inset 0 0 8px #000";
+                } else if (tema === "tech") {
+                    div.textContent = val;
+                    div.style.backgroundColor = "#263238";
+                    div.style.color = "#00e676";
+                    div.style.fontFamily = "monospace";
+                    div.style.border = "1px dashed #00e676";
+                } else if (tema === "gradial") {
+                    div.textContent = val;
+                    div.style.background = `linear-gradient(135deg, hsl(${val * 30}, 70%, 60%), hsl(${val * 30 + 60}, 70%, 40%))`;
+                    div.style.color = "#fff";
+                    div.style.border = "none";
+                } else if (tema === "icones") {
+                    div.innerHTML = `<span>${String.fromCodePoint(0x1F600 + (val % 60))}</span><small style="font-size:0.6em;position:absolute;bottom:5px;right:5px;">${val}</small>`;
+                    div.style.position = "relative";
+                    div.style.fontSize = "2em";
+                    div.style.backgroundColor = "#222";
+                    div.style.border = "2px solid #555";
+                } else {
+                    div.textContent = val;
+                    div.style = "";
+                }
+
+                div.onclick = () => mover(i);
+            }
+            puzzle.appendChild(div);
+        });
+    }
+
+    function mover(i) {
+        const movimentos = [-1, 1, -tamanho, tamanho];
+        for (let m of movimentos) {
+            const j = i + m;
+            if (
+                j >= 0 && j < tiles.length &&
+                ((Math.abs(m) === 1 && Math.floor(i / tamanho) === Math.floor(j / tamanho)) ||
+                    Math.abs(m) === tamanho) &&
+                tiles[j] === null
+            ) {
+                [tiles[i], tiles[j]] = [tiles[j], tiles[i]];
+                renderizar();
+                verificarVitoria();
+                break;
+            }
+        }
+    }
+
+    function verificarVitoria() {
+        const esperado = [...Array(tamanho * tamanho - 1).keys()].map(n => n + 1).concat(null);
+        if (tiles.join() === esperado.join()) {
+            clearInterval(intervalo);
+            document.getElementById("mensagem").textContent = `Parabéns! Você finalizou em ${tempo} segundos!`;
+        }
+    }
+
+    mostrarEscolha();
+  </script>
+</body>
+</html>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Gerador de Notícias</title>
+</head>
+<body>
+  <h1>Adicionar Notícia</h1>
+  <form id="formNoticia">
+    <input type="text" id="titulo" placeholder="Título" required><br>
+    <input type="text" id="imagem" placeholder="URL da imagem"><br>
+    <textarea id="descricao" placeholder="Descrição"></textarea><br>
+    <input type="url" id="link" placeholder="Link da notícia"><br>
+    <button type="submit">Gerar HTML</button>
+  </form>
+
+  <h2>Resultado</h2>
+  <textarea id="output" rows="10" cols="80"></textarea><br>
+  <button id="downloadBtn">Baixar HTML</button>
+
+  <script>
+    const form = document.getElementById('formNoticia');
+    const output = document.getElementById('output');
+    const downloadBtn = document.getElementById('downloadBtn');
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const titulo = document.getElementById('titulo').value;
+      const imagem = document.getElementById('imagem').value;
+      const descricao = document.getElementById('descricao').value;
+      const link = document.getElementById('link').value;
+
+      const html = `
+<div class="noticia">
+  <img src="${imagem}" alt="${titulo}">
+  <h3>${titulo}</h3>
+  <p>${descricao}</p>
+  <a href="${link}" target="_blank">Ler mais</a>
+</div>`;
+
+      output.value = html;
+    });
+
+    downloadBtn.addEventListener('click', () => {
+      const blob = new Blob([output.value], { type: 'text/html' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'noticia.html';
+      a.click();
+    });
+  </script>
+</body>
+</html>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

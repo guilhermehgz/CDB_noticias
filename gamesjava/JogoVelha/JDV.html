@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Jogo da Velha - Vs CPU</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    :root {
+      --cor-bg: #111;
+      --cor-celula: #222;
+      --cor-hover: #333;
+      --cor-x: #ff77cc;
+      --cor-o: #00ffff;
+      --cor-texto: #fff;
+      --cor-neon: #ff77cc;
+      --fonte: 'Arial', sans-serif;
+    }
+
+    body {
+      margin: 0;
+      background-color: var(--cor-bg);
+      font-family: var(--fonte);
+      color: var(--cor-texto);
+      text-align: center;
+      padding: 20px;
+    }
+
+    h1 {
+      color: var(--cor-neon);
+      text-shadow: 0 0 10px var(--cor-neon);
+    }
+
+    .container {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .tabuleiro {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin: 20px auto;
+    }
+
+    .celula {
+      width: 100px;
+      height: 100px;
+      background-color: var(--cor-celula);
+      border-radius: 10px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 2.5rem;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .celula.x {
+      color: var(--cor-x);
+    }
+
+    .celula.o {
+      color: var(--cor-o);
+    }
+
+    .painel {
+      margin-top: 10px;
+    }
+
+    button, select {
+      margin: 5px;
+      padding: 10px;
+      background-color: var(--cor-neon);
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    #mensagem {
+      margin: 10px;
+      font-size: 1.2rem;
+    }
+
+    #placar {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 2.5rem;
+      font-weight: bold;
+      margin-top: 30px;
+      margin-bottom: 20px;
+      gap: 60px;
+    }
+
+    #placar div {
+      min-width: 140px;
+      padding: 15px 25px;
+      border-radius: 10px;
+      background-color: var(--cor-celula);
+    }
+
+    #placar .x {
+      color: var(--cor-x);
+    }
+
+    #placar .o {
+      color: var(--cor-o);
+    }
+
+    #placar .empate {
+      color: var(--cor-neon);
+    }
+
+    .voltar {
+      margin-top: 20px;
+    }
+
+    @media (max-width: 400px) {
+      .celula {
+        width: 80px;
+        height: 80px;
+        font-size: 2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>Jogo da Velha vs CPU</h1>
+  <div id="placar">
+    <div class="x">X: 0</div>
+    <div class="empate">Empates: 0</div>
+    <div class="o">O: 0</div>
+  </div>
+  <div class="container">
+    <div class="tabuleiro" id="tabuleiro"></div>
+  </div>
+  <div id="mensagem">Vez de: X</div>
+
+  <div class="painel">
+    <select id="modo">
+      <option value="pvp">Player vs Player</option>
+      <option value="cpu">Player vs CPU</option>
+    </select>
+
+    <select id="dificuldade">
+      <option value="1">Muito fácil</option>
+      <option value="2">Fácil</option>
+      <option value="3">Médio</option>
+      <option value="4">Difícil</option>
+      <option value="5">Impossível</option>
+    </select>
+
+    <button onclick="reiniciarJogo()">Reiniciar</button>
+  </div>
+
+  <div class="voltar">
+    <button onclick="window.location.href='../games.html'">Voltar à Tela Inicial</button>
+  </div>
+
+  <script>
+    const tabuleiro = document.getElementById("tabuleiro");
+    const mensagem = document.getElementById("mensagem");
+    const placarDiv = document.getElementById("placar");
+    const modoSelect = document.getElementById("modo");
+    const dificuldadeSelect = document.getElementById("dificuldade");
+
+    let estado = Array(9).fill(null);
+    let jogador = "X";
+    let ativo = true;
+
+    let placar = { X: 0, O: 0, empate: 0 };
+
+    const padroes = [
+      [0,1,2], [3,4,5], [6,7,8],
+      [0,3,6], [1,4,7], [2,5,8],
+      [0,4,8], [2,4,6]
+    ];
+
+    function atualizarPlacar() {
+      placarDiv.querySelector('.x').textContent = `X: ${placar.X}`;
+      placarDiv.querySelector('.o').textContent = `O: ${placar.O}`;
+      placarDiv.querySelector('.empate').textContent = `Empates: ${placar.empate}`;
+    }
+
+    function criarTabuleiro() {
+      tabuleiro.innerHTML = "";
+      estado.forEach((v, i) => {
+        const celula = document.createElement("div");
+        celula.classList.add("celula");
+        celula.dataset.index = i;
+        celula.textContent = v || "";
+        if (v) celula.classList.add(v.toLowerCase());
+        celula.onclick = () => clique(i);
+        tabuleiro.appendChild(celula);
+      });
+    }
+
+    function clique(i) {
+      if (!estado[i] && ativo) {
+        estado[i] = jogador;
+        alternarJogador();
+        criarTabuleiro();
+        verificarJogo();
+        if (modoSelect.value === "cpu" && jogador === "O" && ativo) {
+          setTimeout(jogadaCPU, 400);
+        }
+      }
+    }
+
+    function jogadaCPU() {
+      const dificuldade = parseInt(dificuldadeSelect.value);
+      let jogada;
+      if (dificuldade === 1) jogada = aleatorio();
+      else if (dificuldade === 2) jogada = cpuFacil();
+      else if (dificuldade === 3) jogada = Math.random() < 0.5 ? aleatorio() : cpuFacil();
+      else if (dificuldade === 4) jogada = cpuInteligente();
+      else jogada = melhorJogada("O");
+      if (jogada !== undefined) clique(jogada);
+    }
+
+    function aleatorio() {
+      const livres = estado.map((v, i) => v ? null : i).filter(v => v !== null);
+      return livres[Math.floor(Math.random() * livres.length)];
+    }
+
+    function cpuFacil() {
+      for (let i = 0; i < 9; i++) {
+        if (!estado[i]) {
+          estado[i] = "O";
+          if (verificarVitoria("O")) { estado[i] = null; return i; }
+          estado[i] = null;
+        }
+      }
+      for (let i = 0; i < 9; i++) {
+        if (!estado[i]) {
+          estado[i] = "X";
+          if (verificarVitoria("X")) { estado[i] = null; return i; }
+          estado[i] = null;
+        }
+      }
+      return aleatorio();
+    }
+
+    function cpuInteligente() {
+      return cpuFacil();
+    }
+
+    function melhorJogada(jogadorAtual) {
+      let melhor = -Infinity;
+      let jogada;
+      estado.forEach((val, i) => {
+        if (!val) {
+          estado[i] = jogadorAtual;
+          let pontuacao = minimax(estado, 0, false);
+          estado[i] = null;
+          if (pontuacao > melhor) {
+            melhor = pontuacao;
+            jogada = i;
+          }
+        }
+      });
+      return jogada;
+    }
+
+    function minimax(novoEstado, profundidade, isMin) {
+      if (verificarVitoria("O")) return 10 - profundidade;
+      if (verificarVitoria("X")) return profundidade - 10;
+      if (novoEstado.every(c => c)) return 0;
+
+      if (isMin) {
+        let menor = Infinity;
+        novoEstado.forEach((v, i) => {
+          if (!v) {
+            novoEstado[i] = "X";
+            menor = Math.min(menor, minimax(novoEstado, profundidade + 1, false));
+            novoEstado[i] = null;
+          }
+        });
+        return menor;
+      } else {
+        let maior = -Infinity;
+        novoEstado.forEach((v, i) => {
+          if (!v) {
+            novoEstado[i] = "O";
+            maior = Math.max(maior, minimax(novoEstado, profundidade + 1, true));
+            novoEstado[i] = null;
+          }
+        });
+        return maior;
+      }
+    }
+
+    function alternarJogador() {
+      jogador = jogador === "X" ? "O" : "X";
+      mensagem.textContent = `Vez de: ${jogador}`;
+    }
+
+    function verificarJogo() {
+      if (verificarVitoria("X")) {
+        mensagem.textContent = "X venceu!";
+        placar.X++;
+        ativo = false;
+        atualizarPlacar();
+        setTimeout(reiniciarJogo, 2000);
+      } else if (verificarVitoria("O")) {
+        mensagem.textContent = "O venceu!";
+        placar.O++;
+        ativo = false;
+        atualizarPlacar();
+        setTimeout(reiniciarJogo, 2000);
+      } else if (estado.every(c => c)) {
+        mensagem.textContent = "Empate!";
+        placar.empate++;
+        ativo = false;
+        atualizarPlacar();
+        setTimeout(reiniciarJogo, 2000);
+      }
+    }
+
+    function verificarVitoria(p) {
+      return padroes.some(l => l.every(i => estado[i] === p));
+    }
+
+    function reiniciarJogo() {
+      estado = Array(9).fill(null);
+      jogador = "X";
+      ativo = true;
+      mensagem.textContent = "Vez de: X";
+      criarTabuleiro();
+    }
+
+    criarTabuleiro();
+    atualizarPlacar();
+  </script>
+</body>
+</html>
+``` 

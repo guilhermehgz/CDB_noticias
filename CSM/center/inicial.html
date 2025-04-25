@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Bem-vindo</title>
+  <link rel="stylesheet" href="inicial.css"> <!-- Link para o CSS -->
+</head>
+<body>
+  <header>
+    <button id="goHomeBtn">Página Inicial</button>
+    <button id="logoutBtn">Sair</button>
+    <h1>Centro de Mídia</h1>
+  </header>
+  <h2>Gerenciar Página Inicial</h2> 
+  <div>
+    <li>Cor de fundo</li>
+    <li>Tamanho da fonte</li>
+    <li>Cor da fonte</li>
+    <li>Cor do botão</li>
+  </div>
+  <h2>Gerenciar Notícias</h2>
+  <div>
+    <li>Adicionar notícia</li>
+    <li>Editar notícia</li>
+    <li>Excluir notícia</li>
+    <li>Visualizar notícia</li>
+  </div>
+  <h2>Gerenciar Conteúdo</h2>
+  <div>
+    <li>Adicionar vídeo</li>
+    <li>Editar link de vídeo</li>
+    <li>Adicionar imagem</li>
+    <li>Editar imagem</li>
+  </div>
+  <h2>Gerenciar Usuários</h2>
+  <div>
+    <li>Adicionar usuário</li>
+    <li>Editar usuário</li>
+    <li>Excluir usuário</li>
+    <li>Visualizar usuário</li>
+  </div>
+
+  <script src="inicial.js"></script>
+  <script>
+    // Proteção da página
+    if (localStorage.getItem("loggedIn") !== "true") {
+      window.location.href = "../login.html";
+    }
+
+    function logout() {
+      localStorage.removeItem("loggedIn");
+      window.location.href = "../login.html";
+      location.reload(); // Recarrega a página após o redirecionamento
+    }
+
+    function goHome() {
+      window.location.href = "../index.html"; // ou ajuste o caminho conforme seu site
+    }
+
+    document.getElementById("logoutBtn").addEventListener("click", logout);
+    document.getElementById("goHomeBtn").addEventListener("click", goHome);
+  </script>
+</body>
+</html>
